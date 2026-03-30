@@ -1,11 +1,12 @@
-import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
-import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
-
 import GUI from 'lil-gui'
+import * as THREE from 'three'
+import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
+import wobbleFragmentShader from './shaders/wobble/fragment.glsl'
+import wobbleVertexShader from './shaders/wobble/vertex.glsl'
 
 const gui = new GUI({ width: 325 })
 const debugObject = {}
@@ -25,16 +26,11 @@ rgbeLoader.load('/warm_restaurant_night_4k.hdr', (environmentMap) => {
   scene.environment = environmentMap
 })
 
-// const exrLoader = new EXRLoader()
-
-// exrLoader.load('/warm_restaurant_night_4k.exr', (texture) => {
-//   texture.mapping = THREE.EquirectangularReflectionMapping
-
-//   scene.background = texture
-//   scene.environment = texture
-// })
-
-const material = new THREE.MeshPhysicalMaterial({
+const material = new CustomShaderMaterial({
+  baseMaterial: THREE.MeshPhysicalMaterial,
+  vertexShader: wobbleVertexShader,
+  fragmentShader: wobbleFragmentShader,
+  // silent: true,
   metalness: 0,
   roughness: 0.5,
   color: '#ffffff',
