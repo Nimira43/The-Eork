@@ -3,10 +3,12 @@ import * as THREE from 'three'
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
-import wobbleFragmentShader from './shaders/wobble/fragment.glsl'
-import wobbleVertexShader from './shaders/wobble/vertex.glsl'
+import eorkFragmentShader from './shaders/the-eork/fragment.glsl'
+import eorkVertexShader from './shaders/the-eork/vertex.glsl'
+
 
 const gui = new GUI({ width: 325 })
 const debugObject = {}
@@ -28,10 +30,10 @@ rgbeLoader.load('/warm_restaurant_night_4k.hdr', (environmentMap) => {
 
 const material = new CustomShaderMaterial({
   baseMaterial: THREE.MeshPhysicalMaterial,
-  vertexShader: wobbleVertexShader,
-  fragmentShader: wobbleFragmentShader,
+  vertexShader: eorkVertexShader,
+  fragmentShader: eorkFragmentShader,
   // silent: true,
-  metalness: 0,
+eorkness: 0,
   roughness: 0.5,
   color: '#ffffff',
   transmission: 0,
@@ -48,12 +50,14 @@ gui.add(material, 'ior', 0, 10, 0.001)
 gui.add(material, 'thickness', 0, 10, 0.001)
 gui.addColor(material, 'color')
 
-const geometry = new THREE.IcosahedronGeometry(2.5, 50)
+let geometry = new THREE.IcosahedronGeometry(2.5, 50)
+geometry = mergeVertices(geometry)
+geometry.computeTangents()
 
-const wobble = new THREE.Mesh(geometry, material)
-wobble.receiveShadow = true
-wobble.castShadow = true
-scene.add(wobble)
+const eork = new THREE.Mesh(geometry, material)
+eork.receiveShadow = true
+eork.castShadow = true
+scene.add(eork)
 
 const plane = new THREE.Mesh(
   new THREE.PlaneGeometry(15, 15, 15),
