@@ -21,7 +21,12 @@ dracoLoader.setDecoderPath('./draco/')
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
-rgbeLoader.load('/warm_restaurant_night_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/warm_restaurant_night_4k.hdr', (environmentMap) => {
+rgbeLoader.load('/blaubeuren_night_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/cobblestone_street_night_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/little_paris_night_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/pergola_walkway_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/victoria_sunset_4k.hdr', (environmentMap) => {
   environmentMap.mapping = THREE.EquirectangularReflectionMapping
 
   scene.background = environmentMap
