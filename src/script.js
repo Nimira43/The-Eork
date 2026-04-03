@@ -9,7 +9,6 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
 import eorkFragmentShader from './shaders/the-eork/fragment.glsl'
 import eorkVertexShader from './shaders/the-eork/vertex.glsl'
 
-
 const gui = new GUI({ width: 325 })
 const debugObject = {}
 
@@ -22,9 +21,9 @@ const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
 // rgbeLoader.load('/warm_restaurant_night_4k.hdr', (environmentMap) => {
-rgbeLoader.load('/blaubeuren_night_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/blaubeuren_night_4k.hdr', (environmentMap) => {
 // rgbeLoader.load('/cobblestone_street_night_4k.hdr', (environmentMap) => {
-// rgbeLoader.load('/little_paris_night_4k.hdr', (environmentMap) => {
+rgbeLoader.load('/little_paris_eiffel_tower_4k.hdr', (environmentMap) => {
 // rgbeLoader.load('/pergola_walkway_4k.hdr', (environmentMap) => {
 // rgbeLoader.load('/victoria_sunset_4k.hdr', (environmentMap) => {
   environmentMap.mapping = THREE.EquirectangularReflectionMapping
@@ -33,12 +32,20 @@ rgbeLoader.load('/blaubeuren_night_4k.hdr', (environmentMap) => {
   scene.environment = environmentMap
 })
 
+const uniforms = {
+  uTime: new THREE.Uniform(0),
+  uPositionFrequency: new THREE.Uniform(0.5),
+  uTimeFrequency: new THREE.Uniform(0.4),
+  uStrength: new THREE.Uniform(0.3)
+}
+
 const material = new CustomShaderMaterial({
   baseMaterial: THREE.MeshPhysicalMaterial,
   vertexShader: eorkVertexShader,
   fragmentShader: eorkFragmentShader,
+  uniforms: uniforms,
   // silent: true,
-eorkness: 0,
+  metalness: 0,
   roughness: 0.5,
   color: '#ffffff',
   transmission: 0,
@@ -48,6 +55,17 @@ eorkness: 0,
   wireframe: false
 })
 
+const depthMaterial = new CustomShaderMaterial({
+  baseMaterial: THREE.MeshDepthMaterial,
+  vertexShader: eorkVertexShader,
+  uniforms: uniforms,
+  // silent: true,
+  depthPacking: THREE.RGBADepthPacking
+})
+
+gui.add(uniforms.uPositionFrequency, 'value', 0, 2, 0.001).name('uPositionFrequency')
+gui.add(uniforms.uTimeFrequency, 'value', 0, 2, 0.001).name('uTimeFrequency')
+gui.add(uniforms.uStrength, 'value', 0, 2, 0.001).name('uStrength')
 gui.add(material, 'metalness', 0, 1, 0.001)
 gui.add(material, 'roughness', 0, 1, 0.001)
 gui.add(material, 'transmission', 0, 1, 0.001)
@@ -60,6 +78,7 @@ geometry = mergeVertices(geometry)
 geometry.computeTangents()
 
 const eork = new THREE.Mesh(geometry, material)
+eork.customDepthMaterial = depthMaterial
 eork.receiveShadow = true
 eork.castShadow = true
 scene.add(eork)
@@ -122,6 +141,7 @@ const clock = new THREE.Clock()
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
+  uniforms.uTime.value = elapsedTime
   controls.update()
   renderer.render(scene, camera)
   window.requestAnimationFrame(tick)

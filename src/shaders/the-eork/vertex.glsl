@@ -1,3 +1,8 @@
+uniform float uTime;
+uniform float uPositionFrequency;
+uniform float uTimeFrequency;
+uniform float uStrength;
+
 attribute vec4 tangent;
 
 #include ../includes/simplexNoise4d.glsl
@@ -5,11 +10,10 @@ attribute vec4 tangent;
 float getEork(vec3 position)
 {
   return simplexNoise4d(vec4(
-    position,
-    0.0
-  ));
+    position * uPositionFrequency,
+    uTime * uTimeFrequency
+  )) * uStrength;
 } 
-
 
 void main()
 {
