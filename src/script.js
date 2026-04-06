@@ -22,8 +22,8 @@ gltfLoader.setDRACOLoader(dracoLoader)
 
 // rgbeLoader.load('/warm_restaurant_night_4k.hdr', (environmentMap) => {
 // rgbeLoader.load('/cobblestone_street_night_4k.hdr', (environmentMap) => {
-rgbeLoader.load('/little_paris_eiffel_tower_4k.hdr', (environmentMap) => {
-// rgbeLoader.load('/pergola_walkway_4k.hdr', (environmentMap) => {
+// rgbeLoader.load('/little_paris_eiffel_tower_4k.hdr', (environmentMap) => {
+rgbeLoader.load('/pergola_walkway_4k.hdr', (environmentMap) => {
 // rgbeLoader.load('/victoria_sunset_4k.hdr', (environmentMap) => {
   environmentMap.mapping = THREE.EquirectangularReflectionMapping
 
@@ -33,7 +33,7 @@ rgbeLoader.load('/little_paris_eiffel_tower_4k.hdr', (environmentMap) => {
 
 debugObject.colourA = '#0000ff'
 debugObject.colourB = '#ff4500'
-debugObject.colourC = '#780505'
+debugObject.colourC = '#700606'
 
 const uniforms = {
   uTime: new THREE.Uniform(0),
