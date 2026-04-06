@@ -31,11 +31,26 @@ rgbeLoader.load('/little_paris_eiffel_tower_4k.hdr', (environmentMap) => {
   scene.environment = environmentMap
 })
 
+debugObject.colourA = '#0000ff'
+debugObject.colourB = '#ff4500'
+debugObject.colourC = '#780505'
+
 const uniforms = {
   uTime: new THREE.Uniform(0),
+
   uPositionFrequency: new THREE.Uniform(0.5),
   uTimeFrequency: new THREE.Uniform(0.4),
-  uStrength: new THREE.Uniform(0.3)
+  uStrength: new THREE.Uniform(0.3),
+  
+  uWarpPositionFrequency: new THREE.Uniform(0.38),
+  uWarpTimeFrequency: new THREE.Uniform(0.12),
+  uWarpStrength: new THREE.Uniform(1.7),
+
+  uColourA: new THREE.Uniform(new THREE.Color(debugObject.colourA)),
+  uColourB: new THREE.Uniform(new THREE.Color(debugObject.colourB)),
+  uColourC: new THREE.Uniform(new THREE.Color(debugObject.colourC)),
+  uTwistStrength: new THREE.Uniform(0.0),
+  uGlowStrength: new THREE.Uniform(0.5)
 }
 
 const material = new CustomShaderMaterial({
@@ -43,7 +58,6 @@ const material = new CustomShaderMaterial({
   vertexShader: eorkVertexShader,
   fragmentShader: eorkFragmentShader,
   uniforms: uniforms,
-  // silent: true,
   metalness: 0,
   roughness: 0.5,
   color: '#ffffff',
@@ -58,19 +72,55 @@ const depthMaterial = new CustomShaderMaterial({
   baseMaterial: THREE.MeshDepthMaterial,
   vertexShader: eorkVertexShader,
   uniforms: uniforms,
-  // silent: true,
   depthPacking: THREE.RGBADepthPacking
 })
 
-gui.add(uniforms.uPositionFrequency, 'value', 0, 2, 0.001).name('uPositionFrequency')
-gui.add(uniforms.uTimeFrequency, 'value', 0, 2, 0.001).name('uTimeFrequency')
-gui.add(uniforms.uStrength, 'value', 0, 2, 0.001).name('uStrength')
+gui
+  .add(uniforms.uPositionFrequency, 'value', 0, 2, 0.001)
+  .name('uPositionFrequency')
+gui
+  .add(uniforms.uTimeFrequency, 'value', 0, 2, 0.001)
+  .name('uTimeFrequency')
+gui
+  .add(uniforms.uStrength, 'value', 0, 2, 0.001)
+  .name('uStrength')
+gui
+  .add(uniforms.uWarpPositionFrequency, 'value', 0, 2, 0.001)
+  .name('uWarpPositionFrequency')
+gui
+  .add(uniforms.uWarpTimeFrequency, 'value', 0, 2, 0.001)
+  .name('uWarpTimeFrequency')
+gui
+  .add(uniforms.uWarpStrength, 'value', 0, 2, 0.001)
+  .name('uWarpStrength')
+gui
+  .addColor(debugObject, 'colourA')
+  .onChange(() => {
+    uniforms.uColourA.value.set(debugObject.colourA)
+  })
+gui
+  .addColor(debugObject, 'colourB')
+  .onChange(() => {
+    uniforms.uColourB.value.set(debugObject.colourB)
+  })
+gui
+  .addColor(debugObject, 'colourC')
+  .onChange(() => {
+    uniforms.uColourC.value.set(debugObject.colourC)
+  })
+gui
+  .add(uniforms.uTwistStrength, 'value', 0, 5, 0.01)
+  .name('uTwistStrength')
+gui
+  .add(uniforms.uGlowStrength, 'value', -5, 5, 0.01)
+  .name('uGlowStrength')
+
 gui.add(material, 'metalness', 0, 1, 0.001)
 gui.add(material, 'roughness', 0, 1, 0.001)
 gui.add(material, 'transmission', 0, 1, 0.001)
 gui.add(material, 'ior', 0, 10, 0.001)
 gui.add(material, 'thickness', 0, 10, 0.001)
-gui.addColor(material, 'color')
+
 
 let geometry = new THREE.IcosahedronGeometry(2.5, 50)
 geometry = mergeVertices(geometry)
@@ -81,16 +131,6 @@ eork.customDepthMaterial = depthMaterial
 eork.receiveShadow = true
 eork.castShadow = true
 scene.add(eork)
-
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(15, 15, 15),
-  new THREE.MeshStandardMaterial()
-)
-plane.receiveShadow = true
-plane.rotation.y = Math.PI
-plane.position.y = - 5
-plane.position.z = 5
-scene.add(plane)
 
 const directionalLight = new THREE.DirectionalLight('#ffffff', 3)
 directionalLight.castShadow = true
@@ -113,8 +153,7 @@ window.addEventListener('resize', () => {
 
   camera.aspect = sizes.width / sizes.height
   camera.updateProjectionMatrix()
-
-  // Update renderer
+  
   renderer.setSize(sizes.width, sizes.height)
   renderer.setPixelRatio(sizes.pixelRatio)
 })
